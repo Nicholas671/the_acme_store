@@ -59,7 +59,43 @@ const createFavorites = async (userId, productId) => {
     } catch (error) {
         console.error('Error creating favorites: ', error);
     }
-}
+};
+
+const fetchUsers = async () => {
+    try {
+        const { rows } = await client.query('SELECT * FROM users;');
+        return rows;
+    } catch (error) {
+        console.error('Error fetching users: ', error);
+    }
+};
+
+const fetchProducts = async () => {
+    try {
+        const { rows } = await client.query('SELECT * FROM products;');
+        return rows;
+    } catch (error) {
+        console.error('Error fetching products: ', error);
+    }
+};
+
+const fetchFavorites = async () => {
+    try {
+        const { rows } = await client.query('SELECT * FROM favorites;');
+        return rows;
+    } catch (error) {
+        console.error('Error fetching favorites: ', error);
+    }
+};
+
+const deleteFavorites = async (id) => {
+    try {
+        const SQL = `DELETE FROM favorites WHERE id = $1;`;
+        await client.query(SQL, [id]);
+    } catch (error) {
+        console.error('Error deleting favorites: ', error);
+    }
+};
 
 
 module.exports = {
@@ -67,5 +103,9 @@ module.exports = {
     createTables,
     createUsers,
     createProducts,
-    createFavorites
+    createFavorites,
+    fetchUsers,
+    fetchProducts,
+    fetchFavorites,
+    deleteFavorites
 };
