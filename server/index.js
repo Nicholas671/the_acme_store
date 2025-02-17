@@ -93,3 +93,17 @@ app.delete('/users/:userId/favorites/:id', async (req, res) => {
     }
 });
 
+const init = async () => {
+    try {
+        await client.connect();
+        console.log('Connected to the database!');
+        app.listen(PORT, () => {
+            console.log(`Server is listening on port ${PORT}!`);
+        });
+    }
+    catch (error) {
+        console.error('Error starting server!', error);
+    }
+};
+
+init();
