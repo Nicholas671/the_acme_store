@@ -4,7 +4,9 @@ require('dotenv').config();
 
 const {
     client,
+    createTables,
     createUser,
+    createProduct,
     createFavorite,
     getUsers,
     getProducts,
@@ -89,10 +91,50 @@ app.delete('/api/users/:userId/favorites/:id', async (req, res) => {
     }
 });
 
+const seedDatabase = async () => {
+    try {
+        console.log('Creating tables...');
+        await createTables(client);
+        console.log('Tables created successfully.');
+
+        console.log('Seeding the database...');
+        console.log('Creating users...');
+        const [moe, ethyl, lucy, larry] = await Promise.all([
+            createUser('moe', 'stooge'),
+            createUser('ethyl', 'mertz'),
+            createUser('lucy', 'ricardo'),
+            createUser('larry', 'fine')
+        ]);
+        console.log('Users created:', moe, ethyl, lucy, larry);
+
+        console.log('Creating products...');
+        const [radio, tv, phone, laptop] = await Promise.all([
+            createProduct('radio'),
+            createProduct('tv'),
+            createProduct('phone'),
+            createProduct('laptop')
+        ]);
+        console.log('Products created:', radio, tv, phone, laptop);
+
+        console.log('Creating favorites...');
+        const [fav1, fav2, fav3, fav4] = await Promise.all([
+            createFavorite(moe.id, radio.id),
+            createFavorite(ethyl.id, tv.id),
+            createFavorite(lucy.id, phone.id),
+            createFavorite(larry.id, laptop.id)
+        ]);
+        console.log('Favorites created:', fav1, fav2, fav3, fav4);
+    } catch (error) {
+        console.error('Error seeding the database:', error);
+    }
+};
+
 const init = async () => {
     try {
+        console.log('Connecting to the database...');
         await client.connect();
         console.log('Connected to the database!');
+        await seedDatabase();
         app.listen(PORT, () => {
             console.log(`Server is listening on port ${PORT}!`);
         });

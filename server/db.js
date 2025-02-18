@@ -12,7 +12,6 @@ const client = new Client({
 
 const createTables = async (client) => {
     try {
-        console.log('Creating tables...');
         const SQL = `
             DROP TABLE IF EXISTS favorites;
             DROP TABLE IF EXISTS products;
@@ -39,13 +38,11 @@ const createTables = async (client) => {
             );
         `;
         await client.query(SQL);
-        console.log('Tables created successfully.');
     } catch (error) {
         console.error('Error creating tables:', error);
         throw error;
     }
 };
-
 
 const createUser = async (username, password) => {
     try {
@@ -65,7 +62,6 @@ const createUser = async (username, password) => {
     }
 };
 
-
 const createProduct = async (name) => {
     try {
         console.log(`Creating product: ${name}`);
@@ -82,10 +78,9 @@ const createProduct = async (name) => {
     }
 };
 
-
 const createFavorite = async (user_id, product_id) => {
     try {
-        console.log(`Creating favorite for user ${user_id} and product ${product_id}`);
+        console.log(`Creating favorite for user_id: ${user_id}, product_id: ${product_id}`);
         const SQL = `
             INSERT INTO favorites (id, user_id, product_id) VALUES ($1, $2, $3)
             RETURNING *;
@@ -99,11 +94,11 @@ const createFavorite = async (user_id, product_id) => {
     }
 };
 
-
 const getUsers = async () => {
     try {
         const SQL = `SELECT * FROM users;`;
         const { rows } = await client.query(SQL);
+        console.log('Fetched users:', rows);
         return rows;
     } catch (error) {
         console.error('Error fetching users:', error);
@@ -122,16 +117,16 @@ const getProducts = async () => {
     }
 };
 
-const getFavorites = async (id) => {
+const getFavorites = async () => {
     try {
         const SQL = `
             SELECT favorites.id, products.name AS product_name, users.username AS user_name
             FROM favorites
             JOIN users ON favorites.user_id = users.id
-            JOIN products ON favorites.product_id = products.id
-            WHERE favorites.user_id = $1;
+            JOIN products ON favorites.product_id = products.id;
         `;
-        const { rows } = await client.query(SQL, [id]);
+        const { rows } = await client.query(SQL);
+        console.log('Fetched favorites:', rows);
         return rows;
     } catch (error) {
         console.error('Error fetching favorites:', error);
@@ -149,6 +144,7 @@ const getAllFavorites = async (id) => {
             WHERE favorites.user_id = $1;
         `;
         const { rows } = await client.query(SQL, [id]);
+        console.log('Fetched all favorites for user:', rows);
         return rows;
     } catch (error) {
         console.error('Error fetching all favorites:', error);
